@@ -1,0 +1,3 @@
+rootProject.name = 'ppmini5'
+
+include ':app'
