@@ -8,8 +8,8 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, 'desktop', 'dist'),
-    publicPath: 'dist/',
     filename: 'bundle.js',
+    publicPath: 'dist/'
   },
   node: {
     __filename: true,
@@ -19,8 +19,12 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
-        loader: 'babel-loader',
+        use: 'babel-loader',
       },
+      {
+        test: /\.node$/,
+        use: 'node-loader',
+      }
     ],
   },
   resolve: {
@@ -33,6 +37,13 @@ module.exports = {
     new webpack.DefinePlugin({
       __DEV__: JSON.stringify(true),
     }),
+    new webpack.ContextReplacementPlugin(
+      /node-gyp-build/,
+      path.resolve(__dirname, 'node_modules/utp-native/prebuilds/'),
+      {
+        [path.resolve(__dirname, 'node_modules/utp-native/prebuilds/darwin-x64/electron-57.node')]: './darwin-x64/electron-57.node'
+      }
+    )
   ],
   target: 'electron-renderer',
 }

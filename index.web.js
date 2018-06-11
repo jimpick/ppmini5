@@ -1,33 +1,14 @@
 import React, { Component } from 'react'
-import { AppRegistry, StyleSheet, Text, View } from 'react-native'
+import { AppRegistry } from 'react-native'
+import App from './src/components/App'
 
-export default class GHViewer extends Component {
+export default class WebApp extends Component {
   render() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native and Electron Jim 2!
-        </Text>
-      </View>
-    )
+    return <App />
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-})
-
-AppRegistry.registerComponent('GHViewer', () => GHViewer)
-AppRegistry.runApplication('GHViewer', {
+AppRegistry.registerComponent('WebApp', () => WebApp)
+AppRegistry.runApplication('WebApp', {
   rootTag: document.getElementById('root'),
 })
