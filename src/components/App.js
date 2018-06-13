@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Text, View } from 'react-native';
-import PixelDoc from '../store/pixelDocElectron';
+import PixelDoc from '../store/pixelDocReactNative';
 import MainView from './MainView';
 
 export default class App extends Component {

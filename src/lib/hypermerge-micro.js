@@ -3,7 +3,7 @@ var Automerge = require('automerge')
 var Multicore = require('./multicore')
 var inherits = require('inherits')
 var thunky = require('thunky')
-var raf = require('random-access-file')
+// var raf = require('random-access-file')
 var ram = require('random-access-memory')
 // var toBuffer = require('to-buffer')
 var {WatchableDoc} = require('automerge')
@@ -66,7 +66,8 @@ function Hypermerge (storage, opts) {
   }
 
   function fileStorage (name) {
-    return raf(name, {directory: storage})
+    return storage(name)
+    // return raf(name, {directory: storage})
   }
 }
 

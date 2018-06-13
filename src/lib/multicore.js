@@ -1,12 +1,12 @@
 const {EventEmitter} = require('events')
-const Archiver = require('hypercore-archiver')
+const Archiver = require('./hypercore-archiver')
 const protocol = require('hypercore-protocol')
 const hypercore = require('hypercore')
 const crypto = require('hypercore/lib/crypto')
 const thunky = require('thunky')
 const toBuffer = require('to-buffer')
 const prettyHash = require('pretty-hash')
-const swarm = require('./multicore-swarm')
+// const swarm = require('./multicore-swarm')
 
 // Monkey-patch hypercore-archiver so we can create a Hypercore
 // directly in the archive
@@ -213,6 +213,7 @@ class Multicore extends EventEmitter {
     return this.archiver.createFeed(key, opts)
   }
 
+  /*
   joinSwarm (opts) {
     opts = Object.assign({}, opts, {live: true})
     // this.emit('debugLog', `Swarm opts: ${JSON.stringify(opts)}`)
@@ -227,6 +228,7 @@ class Multicore extends EventEmitter {
     })
     return sw
   }
+  */
 
   replicateFeed (feed) {
     this.archiver.emit('replicateFeed', feed)
