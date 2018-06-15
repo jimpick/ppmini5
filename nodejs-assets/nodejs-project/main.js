@@ -38,7 +38,7 @@ rn_bridge.channel.on('message', message => {
     console.error('Error parsing message JSON', e);
   }
   if (message.type === 'replicate') {
-    replicate(message.key);
+    replicate(message.archiverKey);
   }
   if (message.type === 'data') {
     fromReactNative.push(Buffer.from(message.data, 'base64'))
@@ -82,7 +82,11 @@ function replicate (key) {
       this.push(chunk)
       cb()
     }),
-    stream
+    stream,
+    err => {
+      console.log('pipe finished', err && err.message)
+      replicating = false
+    }
   )
   multicore.replicateFeed(ar.changes)
 

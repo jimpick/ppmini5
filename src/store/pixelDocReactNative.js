@@ -37,7 +37,12 @@ export default class PixelDoc extends EventEmitter {
     hm.on('ready', this.ready.bind(this))
     this.hm = hm
     this.startGateway()
-    this.sendMessage({type: 'replicate', key: this.key})
+    this.hm.ready(() => {
+      this.sendMessage({
+        type: 'replicate',
+        archiverKey: this.hm.getArchiverKey().toString('hex')
+      })
+    })
   }
 
   startGateway () {
@@ -79,7 +84,10 @@ export default class PixelDoc extends EventEmitter {
     if (typeof message !== 'object') return
     if (message.type === 'gateway-ready') {
       // In case the node.js instance just started up
-      this.sendMessage({type: 'replicate', key: this.key})
+      this.sendMessage({
+        type: 'replicate',
+        archiverKey: this.hm.getArchiverKey().toString('hex')
+      })
     }
     if (message.type === 'data') {
       fromNodeJs.push(Buffer.from(message.data, 'base64'))
