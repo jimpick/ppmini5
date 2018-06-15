@@ -1,18 +1,89 @@
 import {EventEmitter} from 'events'
+import {Readable} from 'stream'
+import nodejs from 'nodejs-mobile-react-native'
 import equal from 'deep-equal'
 import ram from 'random-access-memory'
+import duplexify from 'duplexify'
+import writer from 'flush-write-stream'
+import pump from 'pump'
+import through2 from 'through2'
 import hypermergeMicro from '../lib/hypermerge-micro'
 
 require('events').prototype._maxListeners = 100
 
+const toNodeJs = writer.obj(sendMessage) // writable
+const fromNodeJs = new Readable({
+  objectMode: true,
+  read () {}
+})
+const stream = duplexify(toNodeJs, fromNodeJs)
+
+function sendMessage (data, enc, cb) {
+  nodejs.channel.send(
+    JSON.stringify({
+      type: 'data',
+      data: Buffer.from(data).toString('base64') 
+    })
+  );
+  cb();
+}
+
 export default class PixelDoc extends EventEmitter {
   constructor () {
     super()
-    let key
-    const hm = hypermergeMicro(ram, {key, debugLog: true})
+    this.key = '648facc75531ef5aa9f8b8558ee43b470fcfada58c9971d5a0d6758c5a09ec7f'
+    const hm = hypermergeMicro(ram, {key: this.key, debugLog: true})
     hm.on('debugLog', console.log)
     hm.on('ready', this.ready.bind(this))
     this.hm = hm
+    this.startGateway()
+    this.sendMessage({type: 'replicate', key: this.key})
+  }
+
+  startGateway () {
+    nodejs.start('main.js')
+    nodejs.channel.addListener(
+      'message',
+      this.handleMessage,
+      this
+    )
+    console.log('Jim startGateway pump')
+    pump(
+      stream,
+      through2(function (chunk, enc, cb) {
+        console.log('From NodeJs', chunk)
+        this.push(chunk)
+        cb()
+      }),
+      this.hm.multicore.archiver.replicate({encrypt: false}),
+      through2(function (chunk, enc, cb) {
+        console.log('To NodeJs', chunk)
+        this.push(chunk)
+        cb()
+      }),
+      stream
+    )
+  }
+
+  sendMessage (message) {
+    nodejs.channel.send(JSON.stringify(message))
+  }
+
+  handleMessage (message) {
+    console.log('Jim message', message)
+    try {
+      message = JSON.parse(message)
+    } catch (e) {
+      console.error('Error parsing message', e)
+    }
+    if (typeof message !== 'object') return
+    if (message.type === 'gateway-ready') {
+      // In case the node.js instance just started up
+      this.sendMessage({type: 'replicate', key: this.key})
+    }
+    if (message.type === 'data') {
+      fromNodeJs.push(Buffer.from(message.data, 'base64'))
+    }
   }
 
   update(doc) {
