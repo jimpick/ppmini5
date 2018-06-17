@@ -20,6 +20,7 @@
     "deep-equal": "^1.0.1",
     "electron": "^2.0.2",
     "hypercore-archiver": "^4.6.0",
+    "jsc-android": "^224109.0.0",
     "node-libs-react-native": "^1.0.2",
     "nodejs-mobile-react-native": "^0.1.4",
     "random-access-file": "^2.0.1",
