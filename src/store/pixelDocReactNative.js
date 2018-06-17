@@ -31,7 +31,7 @@ function sendMessage (data, enc, cb) {
 export default class PixelDoc extends EventEmitter {
   constructor () {
     super()
-    this.key = 'ea4d02c28ea1fdcd7587958df2324a65342e287b471707cef396fd4c0503f7d2'
+    this.key = '13889035ec0a521e53c9f8064e073dfb92a756d45d0f8e3431771adb08a83f11'
     const hm = hypermergeMicro(ram, {key: this.key, debugLog: true})
     hm.on('debugLog', console.log)
     hm.on('ready', this.ready.bind(this))

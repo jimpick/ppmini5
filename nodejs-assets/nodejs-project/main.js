@@ -30,7 +30,7 @@ function sendMessage (data, enc, cb) {
 }
 
 rn_bridge.channel.on('message', message => {
-  console.log('Message', message)
+  // console.log('Message', message)
   // rn_bridge.channel.send(msg);
   try {
     message = JSON.parse(message);
@@ -56,6 +56,12 @@ function replicate ({archiverKey, localKey}) {
   ar.on('add', feed => {
     console.log('archive add', feed.key.toString('hex'))
     multicore.replicateFeed(feed)
+    feed.on('append', () => {
+      console.log('feed append', feed.key.toString('hex'), feed.length)
+    })
+    feed.on('sync', () => {
+      console.log('feed sync', feed.key.toString('hex'), feed.length)
+    })
   })
   ar.on('sync', () => {
     console.log('archive sync')
@@ -72,20 +78,24 @@ function replicate ({archiverKey, localKey}) {
 
   pump(
     stream,
+    /*
     through2(function (chunk, enc, cb) {
       console.log('From rn', chunk)
       this.push(chunk)
       cb()
     }),
+    */
     ar.replicate({encrypt: false}),
+    /*
     through2(function (chunk, enc, cb) {
       console.log('To rn', chunk)
       this.push(chunk)
       cb()
     }),
+    */
     stream,
     err => {
-      console.log('pipe finished', err && err.message)
+      console.log('pipe to react native finished', err && err.message)
       replicating = false
     }
   )
