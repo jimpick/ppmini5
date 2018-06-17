@@ -31,7 +31,7 @@ function sendMessage (data, enc, cb) {
 export default class PixelDoc extends EventEmitter {
   constructor () {
     super()
-    this.key = '648facc75531ef5aa9f8b8558ee43b470fcfada58c9971d5a0d6758c5a09ec7f'
+    this.key = 'ea4d02c28ea1fdcd7587958df2324a65342e287b471707cef396fd4c0503f7d2'
     const hm = hypermergeMicro(ram, {key: this.key, debugLog: true})
     hm.on('debugLog', console.log)
     hm.on('ready', this.ready.bind(this))
@@ -40,7 +40,8 @@ export default class PixelDoc extends EventEmitter {
     this.hm.ready(() => {
       this.sendMessage({
         type: 'replicate',
-        archiverKey: this.hm.getArchiverKey().toString('hex')
+        archiverKey: this.hm.getArchiverKey().toString('hex'),
+        localKey: this.hm.local.key.toString('hex')
       })
     })
   }
@@ -52,7 +53,6 @@ export default class PixelDoc extends EventEmitter {
       this.handleMessage,
       this
     )
-    console.log('Jim startGateway pump')
     pump(
       stream,
       through2(function (chunk, enc, cb) {
@@ -86,7 +86,8 @@ export default class PixelDoc extends EventEmitter {
       // In case the node.js instance just started up
       this.sendMessage({
         type: 'replicate',
-        archiverKey: this.hm.getArchiverKey().toString('hex')
+        archiverKey: this.hm.getArchiverKey().toString('hex'),
+        localKey: this.hm.local.key.toString('hex')
       })
     }
     if (message.type === 'data') {

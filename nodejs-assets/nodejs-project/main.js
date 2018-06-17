@@ -38,7 +38,8 @@ rn_bridge.channel.on('message', message => {
     console.error('Error parsing message JSON', e);
   }
   if (message.type === 'replicate') {
-    replicate(message.archiverKey);
+    const {archiverKey, localKey} = message;
+    replicate({archiverKey, localKey});
   }
   if (message.type === 'data') {
     fromReactNative.push(Buffer.from(message.data, 'base64'))
@@ -47,10 +48,10 @@ rn_bridge.channel.on('message', message => {
 
 let replicating = false;
 
-function replicate (key) {
+function replicate ({archiverKey, localKey}) {
   if (replicating) return;
   replicating = true;
-  const multicore = new Multicore(ram, {key})
+  const multicore = new Multicore(ram, {key: archiverKey})
   const ar = multicore.archiver
   ar.on('add', feed => {
     console.log('archive add', feed.key.toString('hex'))
@@ -91,7 +92,13 @@ function replicate (key) {
   multicore.replicateFeed(ar.changes)
 
   // Join swarm
-  const sw = multicore.joinSwarm()
+  const userData = {
+    name: 'android',
+    key: localKey
+  }
+  const sw = multicore.joinSwarm({
+    userData: JSON.stringify(userData)
+  })
   sw.on('connection', (peer, type) => {
     if (!peer.remoteUserData) {
       console.log('Connect - No user data')
