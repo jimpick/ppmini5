@@ -30,9 +30,13 @@
     "react-dom": "16.4.1",
     "react-native": "0.55.4",
     "react-native-electron": "^0.7.0",
+    "react-native-randombytes": "3.2.0",
     "react-native-web": "^0.8.4",
     "to-buffer": "^1.1.1",
     "vm-browserify": "^1.1.0"
+  },
+  "resolutions": {
+    "react-native-randombytes": "3.2.0"
   },
   "devDependencies": {
     "babel-jest": "23.0.1",

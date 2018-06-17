@@ -3,6 +3,7 @@ package com.ppmini5;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.bitgo.randombytes.RandomBytesPackage;
 import com.janeasystems.rn_nodejs_mobile.RNNodeJsMobilePackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -23,8 +24,9 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
+          new RandomBytesPackage(),
           new MainReactPackage(),
-            new RNNodeJsMobilePackage()
+          new RNNodeJsMobilePackage()
       );
     }
 
